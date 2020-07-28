@@ -6,6 +6,8 @@ const config = {
 	use: logger,
 };
 
+const client = new Client(config);
+
 // TOPICS
 const INVITE_COMPANY = 'INVITE_COMPANY';
 const COMPANY_RESPONSE = 'COMPANY_RESPONSE';
@@ -21,7 +23,6 @@ const GIVE_SUPPORT = 'GIVE_SUPPORT';
 const PROVIDE_EVENT_FEEDBACK = 'PROVIDE_EVENT_FEEDBACK';
 const SEND_RESUME_NOTIFICATIONS = 'SEND_RESUME_NOTIFICATIONS';
 
-const client = new Client(config);
 
 const inviteCompany = async ({ task, taskService }) => {
 	console.log('INVITE_COMPANY');
@@ -33,7 +34,9 @@ const inviteCompany = async ({ task, taskService }) => {
 		})
 		.then(async res => {
 			console.log('Sent Digital Career Day invitation to company');
-			await taskService.complete(task);
+			const processVariables = new Variables();
+			processVariables.set('companyName', 'Apple');
+			await taskService.complete(task, processVariables);
 		})
 		.catch(error => console.log(error));
 };
@@ -62,7 +65,7 @@ const processQRCode = async ({ task, taskService }) => {
 	console.log('PROCESS_QR_CODE');
 	const processVariables = new Variables();
 	const companyName = processVariables.get('companyName');
-	processVariables.set('qrCode', `www.us.com/companies/${companyName}/qrcode`);
+	processVariables.set('qrCode', `www.icareerday.com/companies/${companyName}/qrcode`);
 	console.log('Processing company QR Code')
 	await taskService.complete(task, processVariables);
 };
@@ -98,7 +101,7 @@ const communicateEventDate = async ({ task, taskService }) => {
 			const processVariables = new Variables();
 			processVariables.set('eventName', 'TopTierTech');
 			processVariables.set('eventDescription', 'Come meet the most prestigious and influential companies shaping the future of technology!');
-			processVariables.set('eventDate', new Date().getDate());
+			processVariables.set('eventDate', '2020-07-28');
 			console.log('Communicated Students Digital Career Day Event\'s Date');
 			await taskService.complete(task, processVariables);
 		})
